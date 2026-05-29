@@ -1,353 +1,191 @@
-# StayNest — Full Stack Student Accommodation Platform
+# StayNest Backend
 
-A professional, production-ready MERN stack application for finding and managing student accommodation (PGs and Hostels).
+This folder contains the Express.js backend for StayNest. Follow the steps below to setup and run locally, and refer to the file descriptions for a quick architecture overview.
 
-**Project Status:** Phase 3 (Backend APIs complete, Frontend integrated, Ready for Phase 4)
+## Quick start
 
----
+1. Node.js (>=16) and npm installed.
+2. Copy `.env.example` to `.env` and fill values (see MongoDB Atlas instructions below).
+3. Install dependencies:
 
-## 📋 Table of Contents
-
-- [Project Structure](#project-structure)
-- [Tech Stack](#tech-stack)
-- [Features](#features)
-- [Setup Instructions](#setup-instructions)
-- [Backend API Endpoints](#backend-api-endpoints)
-- [Frontend Integration](#frontend-integration)
-- [Deployment](#deployment)
-- [Development Roadmap](#development-roadmap)
-
----
-
-## 🏗️ Project Structure
-
-```
-StayNest/
-├── frontend/                    # React + Bootstrap UI
-│   ├── index.html              # Main HTML
-│   ├── style.css               # Global styles
-│   ├── api.js                  # API client helper
-│   ├── app.js                  # Main app logic
-│   └── README.md               # Frontend docs
-│
-├── backend/                     # Express + MongoDB API
-│   ├── config/
-│   │   ├── db.js               # MongoDB connection
-│   │   └── README.md
-│   ├── controllers/            # Business logic
-│   │   ├── authController.js
-│   │   ├── pgController.js
-│   │   ├── bookingController.js
-│   │   ├── reviewController.js
-│   │   └── roommateController.js
-│   ├── models/                 # Mongoose schemas
-│   │   ├── User.js
-│   │   ├── PG.js
-│   │   ├── Booking.js
-│   │   ├── Review.js
-│   │   └── Roommate.js
-│   ├── routes/                 # API route definitions
-│   │   ├── auth.js
-│   │   ├── pgs.js
-│   │   ├── bookings.js
-│   │   ├── reviews.js
-│   │   └── roommates.js
-│   ├── middleware/             # Express middleware
-│   │   ├── authMiddleware.js
-│   │   └── README.md
-│   ├── utils/                  # Helper functions
-│   │   └── README.md
-│   ├── server.js               # App entrypoint
-│   ├── seed.js                 # Database seeding script
-│   ├── package.json
-│   ├── .env.example
-│   └── README.md
-│
-└── README.md                   # This file
-```
-
----
-
-## 🛠️ Tech Stack
-
-**Frontend:**
-- HTML5, CSS3, Vanilla JavaScript
-- Bootstrap 5.3.3 (responsive UI)
-- Fetch API (async communication)
-
-**Backend:**
-- Node.js + Express.js
-- MongoDB + Mongoose
-- JWT + bcryptjs (authentication)
-- Nodemon (dev mode)
-
-**Database:**
-- MongoDB Atlas (cloud)
-- Mongoose ODM
-
-**Deployment:**
-- Frontend: Vercel (planned)
-- Backend: Render (planned)
-
----
-
-## ✨ Features
-
-### Completed
-- ✅ Premium responsive UI with Bootstap
-- ✅ Dynamic PG card rendering
-- ✅ Live search and smart filters
-- ✅ User authentication (register/login with JWT)
-- ✅ Wishlist system (localStorage)
-- ✅ Booking management
-- ✅ Reviews and ratings
-- ✅ Roommate finder matching
-- ✅ RESTful API with Mongoose models
-- ✅ Protected routes (JWT auth middleware)
-
-### Planned
-- 🔲 Admin panel for PG management
-- 🔲 Email notifications
-- 🔲 Payment gateway integration
-- 🔲 Chat/messaging system
-- 🔲 Google Maps integration
-- 🔲 Advanced analytics dashboard
-
----
-
-## 🚀 Setup Instructions
-
-### Prerequisites
-- Node.js (v14+) and npm
-- MongoDB Atlas account (free tier available)
-- Git
-
-### Backend Setup
-
-1. **Clone and navigate:**
 ```bash
 cd StayNest/backend
+npm install
 ```
 
-2. **Install dependencies:**
+4. Seed demo data (optional but helpful):
+
 ```bash
-npm install express cors mongoose dotenv bcryptjs jsonwebtoken
-npm install -D nodemon
-```
-
-3. **Create `.env` file** (copy from `.env.example`):
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/staynest_db
-JWT_SECRET=your_super_secret_key_here
-```
-
-4. **Seed database** (optional - loads demo PGs):
-```bash
+# Ensure .env MONGO_URI exists or seed uses local fallback
 node seed.js
 ```
 
-5. **Start development server:**
+5. Run server (dev):
+
 ```bash
 npm run dev
 ```
 
-Server runs on `http://localhost:5000`
+The API will run on `http://localhost:5000` by default (set `PORT` in `.env`).
 
-### Frontend Setup
+## Connect to MongoDB Atlas
 
-1. **Navigate to frontend:**
-```bash
-cd ../frontend
+1. Create an Atlas cluster at https://cloud.mongodb.com/. 2. Create a database user and whitelist your IP. 3. Get the connection string and paste it into `.env` as `MONGO_URI` (replace `<password>` and DB name).
+
+Example:
+
+```
+MONGO_URI=mongodb+srv://myUser:mySecret@cluster0.abcd.mongodb.net/staynest_db?retryWrites=true&w=majority
 ```
 
-2. **Update API base URL** in `api.js` if backend URL differs:
-```javascript
-const API_BASE_URL = 'http://localhost:5000/api';
+## Folder structure (backend)
+
+- `server.js` — Entry point. Sets up middleware, routes, DB connection, and error handler.
+- `package.json` — Project metadata & scripts.
+- `.env.example` — Environment variable template.
+- `seed.js` — Demo data seeder (creates users, PGs, reviews).
+- `request-logger.js` — Lightweight request logger used for debugging.
+
+- `config/`
+  - `db.js` — MongoDB connection helper (used by `server.js`).
+
+- `controllers/` — Business logic for each resource (PGs, bookings, payments, reviews, roommates, auth).
+  - `pgController.js`
+  - `bookingController.js`
+  - `paymentController.js`
+  - `reviewController.js`
+  - `roommateController.js`
+  - `authController.js`
+
+- `models/` — Mongoose schemas and models.
+  - `PG.js` — PG / property schema.
+  - `Booking.js` — Booking schema (tracks payment ids and status).
+  - `Review.js` — Reviews tied to users and PGs.
+  - `Roommate.js` — Roommate profile schema.
+  - `User.js` — User schema (email, password hash, role).
+
+- `routes/` — Express route definitions that map endpoints to controllers.
+  - `pgs.js` — `/api/pgs`
+  - `bookings.js` — `/api/bookings` (includes order/verify endpoints)
+  - `payments.js` — `/api/payments` (alias to bookings order/verify)
+  - `reviews.js` — `/api/reviews`
+  - `roommates.js` — `/api/roommates`
+  - `auth.js` — `/api/auth`
+
+- `middleware/` — Reusable middleware
+  - `authMiddleware.js` — Verifies JWT and attaches `req.user`.
+  - `errorHandler.js` — Global error handler used by Express.
+
+## API Endpoints (summary)
+
+- `POST /api/auth/register` — Register new user. Body: `{ name, email, password }`.
+- `POST /api/auth/login` — Login. Body: `{ email, password }`.
+- `GET /api/auth/me` — Protected. Returns user details.
+
+- `GET /api/pgs` — List PGs.
+- `GET /api/pgs/:id` — Get PG details.
+- `POST /api/pgs` — Create PG (owner/admin).
+
+- `POST /api/bookings` — Create a booking (protected).
+- `POST /api/bookings/order` — Create Razorpay order (protected).
+- `POST /api/bookings/verify` — Verify payment signature (protected).
+- `GET /api/bookings/me` — Get current user's bookings (protected).
+- `GET /api/bookings` — Admin: all bookings.
+
+- `POST /api/reviews` — Add review (protected).
+- `GET /api/reviews/:pgId` — Get reviews for a PG.
+
+- `POST /api/roommates` — Create roommate profile.
+- `GET /api/roommates` — List roommate profiles (filters supported).
+
+## How the frontend connects (simple `fetch` examples)
+
+1. Public: get all PGs
+
+```js
+fetch('http://localhost:5000/api/pgs')
+  .then(r => r.json())
+  .then(data => console.log(data));
 ```
 
-3. **Open in browser:**
-```bash
-open index.html
-```
-Or use a local server:
-```bash
-python -m http.server 3000
-```
+2. Register / Login
 
-Frontend runs on `http://localhost:3000`
-
----
-
-## 🔌 Backend API Endpoints
-
-### Authentication
-- `POST /api/auth/register` — Create account
-- `POST /api/auth/login` — Login and get JWT token
-
-### PGs
-- `GET /api/pgs` — List all PGs
-- `GET /api/pgs/:id` — Get single PG details
-- `POST /api/pgs` — Create PG (admin only)
-
-### Bookings
-- `POST /api/bookings` — Create booking (protected)
-- `GET /api/bookings` — List all bookings
-
-### Reviews
-- `POST /api/reviews` — Create review (protected)
-- `GET /api/reviews/:pgId` — Get reviews for a PG
-
-### Roommates
-- `POST /api/roommates` — Create roommate profile
-- `GET /api/roommates` — List profiles with optional filters
-
-**All POST requests require JWT token in header:**
-```
-Authorization: Bearer <your_token>
+```js
+fetch('http://localhost:5000/api/auth/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'User', email: 'a@b.com', password: 'pass' })
+}).then(r => r.json()).then(console.log);
 ```
 
----
+3. Protected request (include JWT)
 
-## 🌐 Frontend Integration
-
-### How It Works
-
-1. **Authentication** (`api.js`)
-   - User clicks "Login" → modal opens
-   - Submit email + password
-   - Frontend calls `auth.login()` or `auth.register()`
-   - Backend validates, returns JWT token
-   - Token stored in `localStorage` for future requests
-
-2. **Fetching PGs** (`app.js`)
-   - On load, `initApp()` calls `pgs.getAll()`
-   - Backend queries MongoDB, returns PG array
-   - Frontend renders cards with Bootstrap grid
-
-3. **Booking Flow**
-   - User clicks "Book Now" on a PG
-   - Booking modal opens with form
-   - Submit → `bookings.create()` sends request
-   - Backend creates document linked to user
-   - Success message shown
-
-4. **Reviews**
-   - User clicks "Reviews" 
-   - `reviews.getByPg(pgId)` fetches existing reviews
-   - User can add new review
-   - `reviews.create()` posts to backend
-
-### API Error Handling
-
-All API calls include try-catch blocks. Errors display as alert:
-```javascript
-try {
-  await pgs.getAll();
-} catch (err) {
-  showAlert(`Error: ${err.message}`, 'danger');
-}
+```js
+const token = localStorage.getItem('staynest_token');
+fetch('http://localhost:5000/api/bookings', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({ pg: pgId, startDate, endDate, totalPrice }),
+}).then(r => r.json()).then(console.log);
 ```
 
----
+4. Create Razorpay order
 
-## 📦 Deployment
+```js
+fetch('http://localhost:5000/api/payments/order', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+  body: JSON.stringify({ bookingId: booking._id, amount: booking.totalPrice })
+}).then(r => r.json()).then(console.log);
+```
 
-### Backend (Render)
+5. Verify payment
 
-1. Push code to GitHub
-2. Connect Render to GitHub repo
-3. Set environment variables in Render dashboard
-4. Deploy (auto-redeploys on push)
+```js
+fetch('http://localhost:5000/api/payments/verify', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+  body: JSON.stringify({ razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId })
+}).then(r => r.json()).then(console.log);
+```
 
-### Frontend (Vercel)
+## Next recommended improvements (industry-ready)
 
-1. Push frontend folder to GitHub
-2. Import project in Vercel
-3. Vercel auto-detects static site
-4. Set production API URL (backend on Render)
-5. Deploy
+- Add input validation (`express-validator`) to controllers.
+- Add security middleware: `helmet`, stricter `cors` origin.
+- Add request-rate limiting (`express-rate-limit`).
+- Add structured logging (`winston` or `pino`).
+- Add API tests (Jest + Supertest) and CI pipeline.
 
----
+If you want, I can:
 
-## 🗓️ Development Roadmap
+- Add a `.env.example` (done) and `README.md` (this file). 
+- Add `helmet` and `express-rate-limit` to `package.json` and wire them in `server.js`.
+- Add basic Socket.io chat skeleton.
 
-### Phase 1 ✅
-- Backend scaffold with Express
-- Folder structure (config, controllers, models, routes, middleware)
-- Starter server and middleware setup
+Tell me which of the recommended improvements to implement next and I'll apply them.
+StayNest Backend
 
-### Phase 2 ✅
-- MongoDB connection with Mongoose
-- 5 data models (User, PG, Booking, Review, Roommate)
-- Database seed script
+This folder contains the Express.js backend for StayNest.
 
-### Phase 3 ✅
-- RESTful APIs for all features
-- JWT authentication (register/login)
-- Protected routes
-- Frontend integration
+Folder structure (created during Phase 1):
 
-### Phase 4 (Next)
-- Admin panel (add/edit/delete PGs)
-- Email notifications (bookings, reviews)
-- Advanced filtering and search
+config/      - configuration helpers (database, env)
+controllers/ - route handlers (business logic)
+models/      - Mongoose schemas & models
+routes/      - Express route definitions (API endpoints)
+middleware/  - Express middleware (auth, error handlers)
+utils/       - helper functions and utilities
+server.js    - application entrypoint
+.env.example - example environment variables (do not commit .env)
 
-### Phase 5
-- Payment gateway (Stripe/Razorpay)
-- Chat/messaging
-- Google Maps integration
+Run locally:
 
----
+1. copy `.env.example` to `.env` and add `MONGO_URI`, `JWT_SECRET`, `RAZORPAY_KEY_ID`, and `RAZORPAY_KEY_SECRET`.
+2. install dependencies: `npm install`
+3. start in dev: `npm run dev`
 
-## 💡 Best Practices
-
-### Code Organization
-- Controllers handle business logic
-- Models define schema and validation
-- Routes map HTTP methods to controllers
-- Middleware handles cross-cutting concerns
-
-### Security
-- Passwords hashed with bcryptjs (salt rounds: 10)
-- JWTs expire in 7 days
-- Protected routes verify token
-- `.env` stores secrets (never commit)
-
-### Error Handling
-- All async functions wrapped in try-catch
-- Meaningful error messages returned to frontend
-- Validation on both frontend and backend
-
-### Database
-- Mongoose validates on save
-- Indexes on frequently queried fields
-- Relationships via `ref` (population)
-
----
-
-## 🤝 Contributing
-
-1. Create a feature branch
-2. Make changes and test locally
-3. Commit with clear messages
-4. Push and open PR
-
----
-
-## 📞 Support
-
-For questions or issues:
-- Check [Backend README](./backend/README.md)
-- Check [Frontend folder](./frontend/)
-- Review [API Endpoints](#backend-api-endpoints) above
-
----
-
-## 📄 License
-
-MIT License — feel free to use for educational and commercial projects.
-
----
-
-**Made with ❤️ for students finding their perfect stay.**
+Next: Phase 2 (connect MongoDB and create models).
